@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario con Gráfico</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    canvas {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Generar Gráfico de Ventas</h1>
+    <form id="dataForm">
+      <label for="months">Meses (separados por comas):</label><br>
+      <input type="text" id="months" placeholder="Enero,Febrero,Marzo"><br><br>
+
+      <label for="sales">Ventas (separadas por comas):</label><br>
+      <input type="text" id="sales" placeholder="1000,1500,2000"><br><br>
+
+      <button type="button" id="generateChart">Generar Gráfico</button>
+    </form>
+
+    <canvas id="salesChart"></canvas>
+  </div>
+
+  <script>
+    // Obtener referencia al formulario y al botón
+    const form = document.getElementById('dataForm');
+    const generateChartButton = document.getElementById('generateChart');
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    let chart;
+
+    // Función para generar el gráfico
+    generateChartButton.addEventListener('click', () => {
+      // Obtener los datos ingresados
+      const monthsInput = document.getElementById('months').value.trim();
+      const salesInput = document.getElementById('sales').value.trim();
+
+      // Validar datos
+      if (!monthsInput || !salesInput) {
+        alert("Por favor, complete ambos campos.");
+        return;
+      }
+
+      const months = monthsInput.split(',').map(item => item.trim());
+      const sales = salesInput.split(',').map(item => parseFloat(item.trim()));
+
+      if (months.length !== sales.length) {
+        alert("El número de meses y ventas debe coincidir.");
+        return;
+      }
+
+      // Si ya existe un gráfico, destruirlo para evitar superposición
+      if (chart) chart.destroy();
+
+      // Crear el gráfico
+      chart = new Chart(ctx, {
+        type: 'bar', // Tipo de gráfico (puede ser 'line', 'pie', etc.)
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'Ventas por Mes',
+            data: sales,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
